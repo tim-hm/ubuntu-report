@@ -37,6 +37,42 @@ func (d *Daemon) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Health Check: Service is running")
 }
 
+type AboutResponse struct {
+	Version string `json:"version"`
+}
+
+func (d *Daemon) daemonAboutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	response := AboutResponse{Version: "0.0.2"}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (d *Daemon) daemonMetricsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	report := `# HELP ubuntu_reportd_requests_total The total number of processed requests
+# TYPE ubuntu_reportd_requests_total counter
+ubuntu_reportd_requests_total 1234
+
+# HELP ubuntu_reportd_errors_total The total number of errors
+# TYPE ubuntu_reportd_errors_total counter
+ubuntu_reportd_errors_total 56
+
+# HELP ubuntu_reportd_uptime_seconds The number of seconds the service has been up
+# TYPE ubuntu_reportd_uptime_seconds gauge
+ubuntu_reportd_uptime_seconds 3600
+`
+	fmt.Fprint(w, report)
+}
+
 // submitHandler handles the POST requests
 func (d *Daemon) submitHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

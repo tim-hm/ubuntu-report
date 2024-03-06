@@ -65,6 +65,8 @@ func (d *Daemon) Serve(ctx context.Context, httpPort int, logDir string, distros
 	r := mux.NewRouter()
 	r.Use(httpLogger)
 	r.HandleFunc("/health", d.healthCheckHandler)
+	r.HandleFunc("/about", d.daemonAboutHandler)
+	r.HandleFunc("/metrics", d.daemonMetricsHandler)
 	r.HandleFunc("/{distro}/{variant}/{version}", d.submitHandler).Methods("POST")
 
 	slog.Debug(fmt.Sprintf("Starting server on %d", httpPort))
