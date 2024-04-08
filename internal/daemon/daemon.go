@@ -69,6 +69,11 @@ func (d *Daemon) Serve(ctx context.Context, httpPort int, logDir string, distros
 	r.HandleFunc("/metrics", d.daemonMetricsHandler)
 	r.HandleFunc("/{distro}/{variant}/{version}", d.submitHandler).Methods("POST")
 
+	// todo: Catch-all route for logging unmatched requests
+	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	})
+
 	slog.Debug(fmt.Sprintf("Starting server on %d", httpPort))
 	d.httpServer = http.Server{
 		Addr:         ":" + strconv.Itoa(httpPort),
