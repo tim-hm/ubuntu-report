@@ -8,7 +8,7 @@ import (
 var globalLevel = &slog.LevelVar{}
 
 func init() {
-	logFile, err := os.OpenFile("/var/log/ubuntu-reportd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
+	logFile, err := os.OpenFile("/var/log/charmed-ubuntu-metrics.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
 	if err != nil {
 		panic("failed to open log file: " + err.Error())
 	}
